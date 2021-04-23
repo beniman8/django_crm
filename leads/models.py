@@ -30,4 +30,4 @@ class Lead(models.Model):
 
 class Agent(models.Model):
     #every agent has one user
-    user = models.OneToOneField(User on_delete=models.CASCADE)
+    user = models.OneToOneField(User ,on_delete=models.CASCADE)
