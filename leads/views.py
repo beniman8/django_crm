@@ -3,5 +3,8 @@ from django.http import HttpResponse
 
 
 def home_page(request):
+    context={
 
-    return HttpResponse("Hello World")
+    }
+
+    return render(request, 'leads/home.html', context)
