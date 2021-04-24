@@ -55,6 +55,14 @@ def lead_update(request,pk):
     return render(request, 'leads/update.html', context)
 
 
+def lead_delete(request,pk):
+    lead = Lead.objects.get(id=pk)
+    lead.delete()
+
+    return redirect('/')
+
+
+
 # def lead_create(request):
 #     form = LeadForm()
 #     if request.method == "POST":
