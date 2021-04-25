@@ -12,16 +12,16 @@
   <body>
 
     <h1>Detail View</h1>
-    <a href="/" class="btn btn-primary">Go Back to leads</a>
+    <a href="{% url 'leads:home' %}" class="btn btn-primary">Go Back to leads</a>
     <hr>
     <h3>name of the lead: {{lead.first_name}}</h3>
     <p>Age of the Lead: {{lead.age}}</p>
     <p>The current agent working with the lead: {{lead.agent}}</p>
 
     <hr>
-    <a href="/{{lead.pk}}/update/">Update</a>
+    <a href="{% url 'leads:update-view' lead.pk %}">Update</a>
     <hr>
-    <a  href="/{{lead.pk}}/delete/">Delete</a>
+    <a  href="{% url 'leads:delete-view' lead.pk %}">Delete</a>
       
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

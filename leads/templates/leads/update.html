@@ -12,7 +12,7 @@
   <body>
 
     <h1>Create View</h1>
-    <a href="/" class="btn btn-primary">Go Back to leads</a>
+    <a href="{% url 'leads:home' %}" class="btn btn-primary">Go Back to leads</a>
     
     
     <h1>Uodate lead for: {{lead.first_name}}</h1>
