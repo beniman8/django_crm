@@ -25,6 +25,7 @@ urlpatterns = [
     # path('landing/',landing_page,name='landing_page'),
     path('landing/',LandingPageView.as_view(),name='landing_page'),
     path('', include('leads.urls',namespace='leads')),
+    path('agents/', include('agents.urls',namespace='agents')),
     path('login/',LoginView.as_view(),name='login'),
     path('logout/',LogoutView.as_view(),name='logout'),
     path('signup/',SignupView.as_view(),name='signup'),
