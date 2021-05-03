@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from .models import Lead,Agent
 from .forms import LeadForm, LeadModelForm,CustomUserCreationForm
 from django.views import generic
+from agents.mixins import OrganizerAndLoginRequiredMixin
 
 
 #CRUD+L - Create, Retrieve, Update and Delete + List
@@ -51,7 +52,7 @@ def lead_detail(request,pk):
     }
     return render(request, 'leads/detail.html', context)
 
-class LeadCreateView(LoginRequiredMixin,generic.CreateView):
+class LeadCreateView(OrganizerAndLoginRequiredMixin,generic.CreateView):
     template_name='leads/create.html'
     form_class=LeadModelForm
 
@@ -86,7 +87,7 @@ def lead_create(request):
     }
     return render(request, 'leads/create.html', context)
 
-class LeadUpdateView(LoginRequiredMixin,generic.UpdateView):
+class LeadUpdateView(OrganizerAndLoginRequiredMixin,generic.UpdateView):
     template_name='leads/update.html'
     queryset=Lead.objects.all()
     form_class=LeadModelForm
