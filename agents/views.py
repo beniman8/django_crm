@@ -6,14 +6,14 @@ from .forms import AgentModelForm
 
 
 
-class AgentsListView(LoginRequiredMixin,generic.ListView):
+class AgentListView(LoginRequiredMixin,generic.ListView):
     template_name="agents/list.html"
     
 
     def get_queryset(self):
         return Agent.objects.all()
 
-class AgentsCreateView(LoginRequiredMixin,generic.CreateView):
+class AgentCreateView(LoginRequiredMixin,generic.CreateView):
     template_name="agents/create.html"
     form_class=AgentModelForm
 
@@ -28,3 +28,34 @@ class AgentsCreateView(LoginRequiredMixin,generic.CreateView):
         return super(AgentsCreateView,self).form_valid(form)
 
 
+class AgentDetailView(LoginRequiredMixin,generic.DetailView):
+
+    template_name="agents/detail.html"
+    context_object_name="agent"
+    
+
+    def get_queryset(self):
+        return Agent.objects.all()
+
+
+class AgentUpdateView(LoginRequiredMixin,generic.UpdateView):
+    template_name='agents/update.html'
+    
+    form_class=AgentModelForm
+    def get_queryset(self):
+        return Agent.objects.all()
+    
+
+    def get_success_url(self):
+        return reverse("agents:agent-list")
+
+class AgentDeleteView(LoginRequiredMixin,generic.DeleteView):
+    template_name='agents/delete.html'
+    def get_queryset(self):
+        return Agent.objects.all()
+    
+
+    def get_success_url(self):
+        return reverse("agents:agent-list")
+
+    
