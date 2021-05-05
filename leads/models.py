@@ -30,9 +30,9 @@ class Lead(models.Model):
 
     # profile_pic = models.ImageField(blank=true,null=True)
     # documents=models.FileField()
-
+    organisation = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
     #This means Every lead will have its own agent
-    agent = models.ForeignKey("Agent",on_delete=models.CASCADE)
+    agent = models.ForeignKey("Agent",null=True,blank=True,on_delete=models.SET_NULL)
 
 
 

@@ -28,8 +28,22 @@ def landing_page(request):
 
 class HomePageView(LoginRequiredMixin,generic.ListView):
     template_name='leads/home.html'
-    queryset=Lead.objects.all()
+    
     context_object_name = "leads"
+
+
+    def get_queryset(self):
+        user = self.request.user
+
+        # initial queryset of the leads for the entire organisation
+        if user.is_organizor:
+            queryset=Lead.objects.filter(organisation=user.userprofile)
+        else:
+            queryset=Lead.objects.filter(organisation=user.agent.organisation)
+            # filter for the agent that is logged in
+            queryset = queryset.filter(agent__user=user)
+        
+        return queryset
 
 def home_page(request):
     leads = Lead.objects.all()
@@ -42,8 +56,21 @@ def home_page(request):
 
 class LeadDetailView(LoginRequiredMixin,generic.DetailView):
     template_name='leads/detail.html'
-    queryset=Lead.objects.all()
     context_object_name = "lead"
+
+    def get_queryset(self):
+        user = self.request.user
+
+    # initial queryset of the leads for the entire organisation
+    if user.is_organizor:
+        queryset=Lead.objects.filter(organisation=user.userprofile)
+    else:
+        queryset=Lead.objects.filter(organisation=user.agent.organisation)
+        # filter for the agent that is logged in
+        queryset = queryset.filter(agent__user=user)
+    
+    return queryset
+
 
 def lead_detail(request,pk):
     lead = Lead.objects.get(id=pk)
@@ -89,8 +116,14 @@ def lead_create(request):
 
 class LeadUpdateView(OrganizerAndLoginRequiredMixin,generic.UpdateView):
     template_name='leads/update.html'
-    queryset=Lead.objects.all()
     form_class=LeadModelForm
+
+    def get_queryset(self):
+        user = self.request.user
+    # initial queryset of the leads for the entire organisation
+    return Lead.objects.filter(organisation=user.userprofile)
+    
+
     
 
     def get_success_url(self):
@@ -115,7 +148,12 @@ def lead_update(request,pk):
 
 class LeadDeleteView(LoginRequiredMixin,generic.DeleteView):
     template_name='leads/delete.html'
-    queryset=Lead.objects.all()
+    
+    def get_queryset(self):
+        user = self.request.user
+    # initial queryset of the leads for the entire organisation
+    return Lead.objects.filter(organisation=user.userprofile)
+    
     
 
     def get_success_url(self):
