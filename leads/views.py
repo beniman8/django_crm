@@ -36,7 +36,7 @@ class HomePageView(LoginRequiredMixin,generic.ListView):
         user = self.request.user
 
         # initial queryset of the leads for the entire organisation
-        if user.is_organizor:
+        if user.is_organizer:
             queryset=Lead.objects.filter(organisation=user.userprofile)
         else:
             queryset=Lead.objects.filter(organisation=user.agent.organisation)
@@ -61,15 +61,15 @@ class LeadDetailView(LoginRequiredMixin,generic.DetailView):
     def get_queryset(self):
         user = self.request.user
 
-    # initial queryset of the leads for the entire organisation
-    if user.is_organizor:
-        queryset=Lead.objects.filter(organisation=user.userprofile)
-    else:
-        queryset=Lead.objects.filter(organisation=user.agent.organisation)
-        # filter for the agent that is logged in
-        queryset = queryset.filter(agent__user=user)
-    
-    return queryset
+        # initial queryset of the leads for the entire organisation
+        if user.is_organizor:
+            queryset=Lead.objects.filter(organisation=user.userprofile)
+        else:
+            queryset=Lead.objects.filter(organisation=user.agent.organisation)
+            # filter for the agent that is logged in
+            queryset = queryset.filter(agent__user=user)
+        
+        return queryset
 
 
 def lead_detail(request,pk):
@@ -120,9 +120,9 @@ class LeadUpdateView(OrganizerAndLoginRequiredMixin,generic.UpdateView):
 
     def get_queryset(self):
         user = self.request.user
-    # initial queryset of the leads for the entire organisation
-    return Lead.objects.filter(organisation=user.userprofile)
-    
+        # initial queryset of the leads for the entire organisation
+        return Lead.objects.filter(organisation=user.userprofile)
+        
 
     
 
@@ -151,9 +151,9 @@ class LeadDeleteView(LoginRequiredMixin,generic.DeleteView):
     
     def get_queryset(self):
         user = self.request.user
-    # initial queryset of the leads for the entire organisation
-    return Lead.objects.filter(organisation=user.userprofile)
-    
+        # initial queryset of the leads for the entire organisation
+        return Lead.objects.filter(organisation=user.userprofile)
+        
     
 
     def get_success_url(self):
