@@ -15,8 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls.static import static
-from django.contrib.auth.views import LoginView,LogoutView
-from django.urls import path,include
+from django.contrib.auth.views import (LoginView,
+                                       LogoutView,
+                                       PasswordResetView,
+                                       PasswordResetDoneView,
+                                       PasswordResetConfirmView,
+                                       PasswordResetCompleteView,
+                                       )
+from django.urls import path,include, reverse_lazy
 from leads.views import landing_page,LandingPageView,SignupView
 from django.conf import settings
 
@@ -26,6 +32,10 @@ urlpatterns = [
     path('landing/',LandingPageView.as_view(),name='landing_page'),
     path('', include('leads.urls',namespace='leads')),
     path('agents/', include('agents.urls',namespace='agents')),
+    path('reset-password/',PasswordResetView.as_view(success_url = reverse_lazy('reset-psw-done')),name='reset-psw'),
+    path('reset-psw-done/',PasswordResetDoneView.as_view(),name='reset-psw-done'),
+    path('reset-psw-confirm/<uidb64>/<token>/',PasswordResetConfirmView.as_view(),name='reset-psw-confirm'),
+    path('password_reset_complete/',PasswordResetCompleteView.as_view(),name='password_reset_complete'),
     path('login/',LoginView.as_view(),name='login'),
     path('logout/',LogoutView.as_view(),name='logout'),
     path('signup/',SignupView.as_view(),name='signup'),
