@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render,redirect,reverse
 from django.http import HttpResponse
 from .models import Lead,Agent
-from .forms import LeadForm, LeadModelForm,CustomUserCreationForm
+from .forms import LeadForm, LeadModelForm,CustomUserCreationForm,AssignAgentForm
 from django.views import generic
 from agents.mixins import OrganizerAndLoginRequiredMixin
 
@@ -160,7 +160,7 @@ def lead_update(request,pk):
     return render(request, 'leads/update.html', context)
 
 
-class LeadDeleteView(LoginRequiredMixin,generic.DeleteView):
+class LeadDeleteView(OrganizerAndLoginRequiredMixin,generic.DeleteView):
     template_name='leads/delete.html'
     
     def get_queryset(self):
@@ -179,6 +179,30 @@ def lead_delete(request,pk):
     lead.delete()
 
     return redirect('/')
+
+
+
+class AssignAgentView(OrganizerAndLoginRequiredMixin,generic.FormView):
+    template_name='leads/assign_agent.html'
+    form_class=AssignAgentForm
+
+    def get_form_kwargs(self,**kwargs):
+        kwargs = super(AssignAgentView,self).get_form_kwargs(**kwargs)
+        kwargs.update({"request":self.request})
+
+        return kwargs
+
+
+    def get_success_url(self):
+        return reverse("leads:home")
+
+    def form_valid(self,form):
+        agent = form.cleaned_data["agent"]
+        lead = Lead.objects.get(id=self.kwargs["pk"])
+        lead.agent = agent
+        lead.save()
+        return super(AssignAgentView,self).form_valid(form)
+
 
 
 
