@@ -2,7 +2,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render,redirect,reverse
 from django.http import HttpResponse
-from .models import Lead,Agent
+from .models import Lead,Agent,Category
 from .forms import LeadForm, LeadModelForm,CustomUserCreationForm,AssignAgentForm
 from django.views import generic
 from agents.mixins import OrganizerAndLoginRequiredMixin
@@ -204,6 +204,41 @@ class AssignAgentView(OrganizerAndLoginRequiredMixin,generic.FormView):
         return super(AssignAgentView,self).form_valid(form)
 
 
+class CategoryListView(LoginRequiredMixin,generic.ListView):
+    template_name = "leads/category_list.html"
+    context_object_name = "category_list"
+
+
+    def get_context_data(self,**kwargs):
+        context = super(CategoryListView,self).get_context_data(**kwargs)
+
+        user = self.request.user
+
+        # initial queryset of the leads for the entire organisation
+        if user.is_organizer:
+            queryset=Lead.objects.filter(organisation=user.userprofile)
+        else:
+            queryset=Lead.objects.filter(organisation=user.agent.organisation)
+        
+        context.update({
+            "unassigned_lead_count":queryset.filter(category__isnull=True).count()
+        })
+
+        return context
+
+
+    def get_queryset(self):
+        user = self.request.user
+
+        # initial queryset of the leads for the entire organisation
+        if user.is_organizer:
+            queryset=Category.objects.filter(organisation=user.userprofile)
+        else:
+            queryset=Category.objects.filter(organisation=user.agent.organisation)
+        
+        return queryset
+
+    
 
 
 # def lead_create(request):
