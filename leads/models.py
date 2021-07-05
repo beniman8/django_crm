@@ -33,8 +33,7 @@ class Lead(models.Model):
     organisation = models.ForeignKey(UserProfile,on_delete=models.CASCADE,null=True,blank=True)
     #This means Every lead will have its own agent
     agent = models.ForeignKey("Agent",null=True,blank=True,on_delete=models.SET_NULL)
-
-
+    category = models.ForeignKey("Category", null=True,blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -46,7 +45,15 @@ class Agent(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=30)
     
+
+    def __str__(self):
+        return self.name
+        
 
 def post_user_created_signal(sender,instance,created,**kwargs):
 
