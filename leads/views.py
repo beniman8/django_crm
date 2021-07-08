@@ -15,7 +15,7 @@ class SignupView(generic.CreateView):
     template_name='registration/signup.html'
     form_class=CustomUserCreationForm
 
-    
+
     def get_success_url(self):
         return reverse("login")
 
@@ -28,7 +28,7 @@ def landing_page(request):
 
 class HomePageView(LoginRequiredMixin,generic.ListView):
     template_name='leads/home.html'
-    
+
     context_object_name = "leads"
 
 
@@ -42,11 +42,11 @@ class HomePageView(LoginRequiredMixin,generic.ListView):
             queryset=Lead.objects.filter(organisation=user.agent.organisation, agent__isnull=False)
             # filter for the agent that is logged in
             queryset = queryset.filter(agent__user=user)
-        
+
         return queryset
 
     def get_context_data(self,**kwargs):
-        
+
         context = super(HomePageView,self).get_context_data(**kwargs)
         user = self.request.user
         if user.is_organizer:
@@ -82,7 +82,7 @@ class LeadDetailView(LoginRequiredMixin,generic.DetailView):
             queryset=Lead.objects.filter(organisation=user.agent.organisation)
             # filter for the agent that is logged in
             queryset = queryset.filter(agent__user=user)
-        
+
         return queryset
 
 
@@ -97,7 +97,7 @@ class LeadCreateView(OrganizerAndLoginRequiredMixin,generic.CreateView):
     template_name='leads/create.html'
     form_class=LeadModelForm
 
-    
+
     def get_success_url(self):
         return reverse("leads:home")
 
@@ -110,7 +110,7 @@ class LeadCreateView(OrganizerAndLoginRequiredMixin,generic.CreateView):
         )
 
         return super(LeadCreateView,self).form_valid(form)
-    
+
 
 
 def lead_create(request):
@@ -119,12 +119,12 @@ def lead_create(request):
         form = LeadModelForm(request.POST)
         if form.is_valid():
             form.save()
-           
+
             return redirect("/")
 
     context = {
         'form':form
-        
+
     }
     return render(request, 'leads/create.html', context)
 
@@ -136,9 +136,9 @@ class LeadUpdateView(OrganizerAndLoginRequiredMixin,generic.UpdateView):
         user = self.request.user
         # initial queryset of the leads for the entire organisation
         return Lead.objects.filter(organisation=user.userprofile)
-        
 
-    
+
+
 
     def get_success_url(self):
         return reverse("leads:home")
@@ -149,7 +149,7 @@ def lead_update(request,pk):
     if request.method == "POST":
         form = LeadModelForm(request.POST,instance=lead)
         if form.is_valid():
-            form.save()           
+            form.save()
             return redirect("/")
 
     context = {
@@ -162,13 +162,13 @@ def lead_update(request,pk):
 
 class LeadDeleteView(OrganizerAndLoginRequiredMixin,generic.DeleteView):
     template_name='leads/delete.html'
-    
+
     def get_queryset(self):
         user = self.request.user
         # initial queryset of the leads for the entire organisation
         return Lead.objects.filter(organisation=user.userprofile)
-        
-    
+
+
 
     def get_success_url(self):
         return reverse("leads:home")
@@ -219,7 +219,7 @@ class CategoryListView(LoginRequiredMixin,generic.ListView):
             queryset=Lead.objects.filter(organisation=user.userprofile)
         else:
             queryset=Lead.objects.filter(organisation=user.agent.organisation)
-        
+
         context.update({
             "unassigned_lead_count":queryset.filter(category__isnull=True).count()
         })
@@ -235,10 +235,43 @@ class CategoryListView(LoginRequiredMixin,generic.ListView):
             queryset=Category.objects.filter(organisation=user.userprofile)
         else:
             queryset=Category.objects.filter(organisation=user.agent.organisation)
-        
+
         return queryset
 
-    
+
+class CategoryDetailView(LoginRequiredMixin,generic.DetailView):
+    template_name="leads/category_detail.html"
+    context_object_name = "category"
+
+    # def get_context_data(self,**kwargs):
+    #     context = super(CategoryDetailView,self).get_context_data(**kwargs)
+
+    #     # qs = Lead.objects.filter(category=self.get_object()) this is kind of the same as the leads variable
+    #     leads = self.get_object().leads.all()
+
+    #     # self.get_object().lead_set.all() this is how to call all the leads related to the category when it is beig used as a foreing key
+    #     # if you have a related name set in the model you can use self.get_object()./**Insert Realated name**//.all()  -> self.get_object().leads.all()
+
+    #     context.update({
+    #         "leads":leads
+    #     })
+
+    #     return context
+
+    def get_queryset(self):
+        user = self.request.user
+
+        # initial queryset of the leads for the entire organisation
+        if user.is_organizer:
+            queryset=Category.objects.filter(organisation=user.userprofile)
+        else:
+            queryset=Category.objects.filter(organisation=user.agent.organisation)
+
+        return queryset
+
+
+
+
 
 
 # def lead_create(request):
@@ -259,7 +292,7 @@ class CategoryListView(LoginRequiredMixin,generic.ListView):
 
 #     context = {
 #         'form':form
-        
+
 #     }
 #     return render(request, 'leads/create.html', context)
 
@@ -273,7 +306,7 @@ class CategoryListView(LoginRequiredMixin,generic.ListView):
 #             last_name=form.cleaned_data['last_name']
 #             age=form.cleaned_data['age']
 #             agent = Agent.objects.first()
-            
+
 #             lead.first_name=first_name,
 #             lead.last_name=last_name,
 #             lead.age=age,
