@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load tailwind_filters %}
 {% block title %}Create  Page{% endblock title %}
 
 
@@ -10,7 +11,7 @@
 <h1>Are you sure you want to delete this agent</h1>
     <form method ="POST" action="">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|crispy }}
 
     <button type="submit" class="btn btn-primary">Yes</button>
   </form>

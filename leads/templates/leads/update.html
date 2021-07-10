@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
+{% load tailwind_filters %}
 {% block title %}Update  Page{% endblock title %}
 
 
 {% block content %}
-TODO fix urls 
+
 <section class="text-gray-600 body-font overflow-hidden">
   <div class="container px-5 py-24 mx-auto">
     <div class="lg:w-4/5 mx-auto flex flex-wrap">
@@ -19,7 +20,7 @@ TODO fix urls
 
         <form method ="POST" action="">
           {% csrf_token %}
-          {{ form.as_p }}
+          {{ form|crispy }}
       
           <button type="submit" class="btn btn-primary">Submit</button>
         </form>
