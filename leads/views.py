@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render,redirect,reverse
 from django.http import HttpResponse
 from .models import Lead,Agent,Category
-from .forms import LeadForm, LeadModelForm,CustomUserCreationForm,AssignAgentForm
+from .forms import LeadForm, LeadModelForm,CustomUserCreationForm,AssignAgentForm,LeadCategoryUpdateForm
 from django.views import generic
 from agents.mixins import OrganizerAndLoginRequiredMixin
 
@@ -76,7 +76,7 @@ class LeadDetailView(LoginRequiredMixin,generic.DetailView):
         user = self.request.user
 
         # initial queryset of the leads for the entire organisation
-        if user.is_organizor:
+        if user.is_organizer:
             queryset=Lead.objects.filter(organisation=user.userprofile)
         else:
             queryset=Lead.objects.filter(organisation=user.agent.organisation)
@@ -269,6 +269,25 @@ class CategoryDetailView(LoginRequiredMixin,generic.DetailView):
 
         return queryset
 
+
+class LeadCategoryUpdateView(LoginRequiredMixin,generic.UpdateView):
+    template_name='leads/category_update.html'
+    form_class=LeadCategoryUpdateForm
+
+    def get_queryset(self):
+        user = self.request.user
+        # initial queryset of the leads for the entire organisation
+        if user.is_organizer:
+            queryset=Lead.objects.filter(organisation=user.userprofile)
+        else:
+            queryset=Lead.objects.filter(organisation=user.agent.organisation)
+
+            queryset = queryset.filter(agent__user=user)
+
+        return queryset
+
+    def get_success_url(self):
+        return reverse("leads:detail-view",kwargs={"pk":self.get_object().id})
 
 
 
